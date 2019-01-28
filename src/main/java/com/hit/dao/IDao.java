@@ -14,12 +14,12 @@ public interface IDao<ID extends Serializable,T>
 	 * Deletes a given entity.
 	 * @param entity
 	 */
-	public void delete(T entity);
+	public void delete(T entity) throws IllegalArgumentException;
 	
 	/***
 	 * Retrieves an entity by its id.
 	 * @param id
 	 * @return
 	 */
-	public T find(ID id);
+	public T find(ID id) throws IllegalArgumentException;
 }
