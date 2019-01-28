@@ -49,7 +49,8 @@ public class CacheUnit<T>
 			}
 		}
 		
-		return (DataModel<T>[]) l.values().toArray();
+		DataModel<T>[] array = (DataModel<T>[]) l.values().toArray();
+		return array;
 	}
 	
 	public void removeDataModels(Long[] ids)
