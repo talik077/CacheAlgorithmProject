@@ -37,7 +37,7 @@ public class CLI implements Runnable {
 		this.m_PrintStream = (PrintStream) out;
 		this.m_AlgoNames = new String[] { "LRU", "SecondChance", "Random" };
 		this.pcs = new PropertyChangeSupport(this);
-		this.state = StateEnum.START;
+		this.state = StateEnum.STOP;
 	}
 
 	public void write(String string) {
@@ -59,7 +59,7 @@ public class CLI implements Runnable {
 				write("Thank you");
 				pcs.firePropertyChange("statechange", this.state, StateEnum.STOP);
 				this.state =  StateEnum.STOP;
-				return;
+				break;
 			} else if (input.contains("Cache_unit_config")) {
 				while (true) {
 					String[] splited = input.split("\\s+");
@@ -95,6 +95,7 @@ public class CLI implements Runnable {
 			} else if (input.equalsIgnoreCase("start")) {
 				pcs.firePropertyChange("statechange", this.state,  StateEnum.START);
 				this.state = StateEnum.START;
+				break;
 			}
 		}
 	}

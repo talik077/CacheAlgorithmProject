@@ -31,26 +31,27 @@ public class Server implements Runnable, PropertyChangeListener, EventListener {
 		Socket socket = null;
 		ExecutorService pool = Executors.newFixedThreadPool(20);
 		ServerSocket listener = null;
+		try {
+			listener = new ServerSocket(this.m_Port);
+			// listener.setSoTimeout(100);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		while (this.m_State != StateEnum.STOP) {
-			try  {
-				listener = new ServerSocket(this.m_Port);
-				
-				try {
-					socket = listener.accept();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				if (socket != null) {
-					HandleRequest<String> handleRequest = new HandleRequest<String>(socket,
-							new CacheUnitController<String>());
-					pool.execute(handleRequest);
-					socket = null;
-				}
 
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+			try {
+				socket = listener.accept();
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			if (socket != null) {
+				HandleRequest<String> handleRequest = new HandleRequest<String>(socket,
+						new CacheUnitController<String>());
+				pool.execute(handleRequest);
+				socket = null;
+			}
+
 		}
 		this.terminateServer(pool, listener);
 
@@ -63,6 +64,11 @@ public class Server implements Runnable, PropertyChangeListener, EventListener {
 		switch (name) {
 		case "statechange":
 			m_State = (StateEnum) newVal;
+
+			if (m_State == StateEnum.START) {
+				new Thread(this).start();
+			}
+
 			break;
 		case "algochange":
 			m_Algo = (String) newVal;

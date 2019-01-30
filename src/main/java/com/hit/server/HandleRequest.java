@@ -26,7 +26,7 @@ public class HandleRequest<T> implements Runnable {
 	public void run() {
 		// TODO Auto-generated method stub
 		ObjectOutputStream out = null;
-		Request<DataModel<T>[]> request = this.Request();
+		Request<DataModel<T>[]> request = this.Request(m_Socket);
 		if (request != null) {
 			
 			String jsonResponse = this.Response(request);
@@ -54,11 +54,11 @@ public class HandleRequest<T> implements Runnable {
 		}
 	}
 
-	private Request<DataModel<T>[]> Request() {
+	private Request<DataModel<T>[]> Request(Socket socket) {
 		ObjectInputStream in = null;
 		String jsonStr = null;
 		try {
-			in = new ObjectInputStream(this.m_Socket.getInputStream());
+			in = new ObjectInputStream(socket.getInputStream());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
