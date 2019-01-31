@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.hit.dm.DataModel;
 import com.hit.services.CacheUnitController;
@@ -17,9 +18,18 @@ public class HandleRequest<T> implements Runnable {
 	protected Socket m_Socket;
 	protected CacheUnitController<T> m_Controller;
 
+	private ObjectInputStream in;
+
 	public HandleRequest(Socket s, CacheUnitController<T> controller) {
 		this.m_Socket = s;
 		this.m_Controller = controller;
+		try {
+			this.in = new ObjectInputStream(s.getInputStream());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	@Override
@@ -28,9 +38,9 @@ public class HandleRequest<T> implements Runnable {
 		ObjectOutputStream out = null;
 		Request<DataModel<T>[]> request = this.Request(m_Socket);
 		if (request != null) {
-			
+
 			String jsonResponse = this.Response(request);
-			
+
 			try {
 				out = new ObjectOutputStream(this.m_Socket.getOutputStream());
 				out.writeObject(jsonResponse);
@@ -38,8 +48,7 @@ public class HandleRequest<T> implements Runnable {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-			finally {
+			} finally {
 				try {
 					if (out != null) {
 						out.close();
@@ -50,28 +59,24 @@ public class HandleRequest<T> implements Runnable {
 					e.printStackTrace();
 				}
 			}
-			
+
 		}
 	}
 
 	private Request<DataModel<T>[]> Request(Socket socket) {
-		ObjectInputStream in = null;
+		// ObjectInputStream in = null;
 		String jsonStr = null;
-		try {
-			in = new ObjectInputStream(socket.getInputStream());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		try {
-			jsonStr = (String) in.readObject();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		Request<DataModel<T>[]> request = gson.fromJson(jsonStr, new TypeToken<Request<DataModel<T>[]>>() {
-		}.getType());
 		
+		try {
+			jsonStr = (String) this.in.readObject().toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String myString = jsonStr.substring(1, jsonStr.length());
+		myString = myString.replaceAll("(\\r|\\n)", "");
+	    GsonBuilder gsonBldr = new GsonBuilder();
+	    Request<DataModel<T>[]> request = gsonBldr.setLenient().create().fromJson(myString, new TypeToken<Request<DataModel<T>[]>>() {}.getType());
+
 		try {
 			if (in != null) {
 				in.close();
@@ -80,7 +85,7 @@ public class HandleRequest<T> implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return request;
 	}
 

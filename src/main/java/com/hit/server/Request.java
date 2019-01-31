@@ -9,28 +9,29 @@ public class Request<T> implements Serializable
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	protected Map<String,String> m_Headers;
-	protected T m_Body;
+	protected Map<String,String> headers;
+	protected T body;
 	
 	public Request(Map<String,String> headers, T body)
 	{
-		this.m_Headers = headers;
-		this.m_Body = body;
+		this.headers = headers;
+		this.body = body;
 	}
 
 	public Map<String, String> getHeaders() {
-		return m_Headers;
+		return headers;
 	}
 
 	public void setHeaders(Map<String, String> m_Headers) {
-		this.m_Headers = m_Headers;
+		this.headers = m_Headers;
 	}
 
 	public T getBody() {
-		return m_Body;
+		return body;
 	}
 
 	public void setBody(T m_Body) {
-		this.m_Body = m_Body;
+		this.body = m_Body;
 	}
+	
 }
