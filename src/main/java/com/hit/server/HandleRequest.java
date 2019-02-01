@@ -36,7 +36,7 @@ public class HandleRequest<T> implements Runnable {
 	public void run() {
 		// TODO Auto-generated method stub
 		ObjectOutputStream out = null;
-		Request<DataModel<T>[]> request = this.Request(m_Socket);
+		Request<DataModel<T>[]> request = this.GetRequest(m_Socket);
 		if (request != null) {
 
 			String jsonResponse = this.Response(request);
@@ -50,9 +50,8 @@ public class HandleRequest<T> implements Runnable {
 				e.printStackTrace();
 			} finally {
 				try {
-					if (out != null) {
-						out.close();
-					}
+					in.close();
+					out.close();
 					this.m_Socket.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -63,7 +62,7 @@ public class HandleRequest<T> implements Runnable {
 		}
 	}
 
-	private Request<DataModel<T>[]> Request(Socket socket) {
+	private Request<DataModel<T>[]> GetRequest(Socket socket) {
 		// ObjectInputStream in = null;
 		String jsonStr = null;
 		
@@ -72,11 +71,10 @@ public class HandleRequest<T> implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		String myString = jsonStr.substring(1, jsonStr.length());
-		myString = myString.replaceAll("(\\r|\\n)", "");
 	    GsonBuilder gsonBldr = new GsonBuilder();
-	    Request<DataModel<T>[]> request = gsonBldr.setLenient().create().fromJson(myString, new TypeToken<Request<DataModel<T>[]>>() {}.getType());
-
+	    Request<DataModel<T>[]> request = gsonBldr.setLenient().create().fromJson(jsonStr, new TypeToken<Request<DataModel<T>[]>>() {}.getType());
+	    
+	    /**
 		try {
 			if (in != null) {
 				in.close();
@@ -84,7 +82,7 @@ public class HandleRequest<T> implements Runnable {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} **/
 
 		return request;
 	}
