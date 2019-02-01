@@ -52,6 +52,7 @@ public class HandleRequest<T> implements Runnable {
 				try {
 					if (out != null) {
 						out.close();
+						in.close();
 					}
 					this.m_Socket.close();
 				} catch (IOException e) {
@@ -76,16 +77,6 @@ public class HandleRequest<T> implements Runnable {
 		myString = myString.replaceAll("(\\r|\\n)", "");
 	    GsonBuilder gsonBldr = new GsonBuilder();
 	    Request<DataModel<T>[]> request = gsonBldr.setLenient().create().fromJson(myString, new TypeToken<Request<DataModel<T>[]>>() {}.getType());
-
-		try {
-			if (in != null) {
-				in.close();
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
 		return request;
 	}
 
