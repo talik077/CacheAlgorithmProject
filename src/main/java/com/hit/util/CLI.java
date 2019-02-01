@@ -1,37 +1,29 @@
 package com.hit.util;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
 import java.util.Scanner;
-
-import com.hit.server.Server;
 
 public class CLI implements Runnable {
 
-    private PropertyChangeSupport pcs;
+	private PropertyChangeSupport pcs;
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.addPropertyChangeListener(listener);
-    }
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		this.pcs.addPropertyChangeListener(listener);
+	}
 
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.removePropertyChangeListener(listener);
-    }
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		this.pcs.removePropertyChangeListener(listener);
+	}
 
 	protected Scanner m_Scanner;
 	protected PrintStream m_PrintStream;
 	protected String[] m_AlgoNames;
 	private StateEnum state;
-	
+
 	public CLI(InputStream in, OutputStream out) {
 		this.m_Scanner = new Scanner(in);
 		this.m_PrintStream = (PrintStream) out;
@@ -43,8 +35,6 @@ public class CLI implements Runnable {
 	public void write(String string) {
 		this.m_PrintStream.println(string);
 	}
-	
-
 
 	@Override
 	public void run() {
@@ -58,7 +48,7 @@ public class CLI implements Runnable {
 			if (input.equalsIgnoreCase("stop")) {
 				write("Thank you");
 				pcs.firePropertyChange("statechange", this.state, StateEnum.STOP);
-				this.state =  StateEnum.STOP;
+				this.state = StateEnum.STOP;
 				break;
 			} else if (input.contains("Cache_unit_config")) {
 				while (true) {
@@ -93,12 +83,11 @@ public class CLI implements Runnable {
 					break;
 				}
 			} else if (input.equalsIgnoreCase("start")) {
-				pcs.firePropertyChange("statechange", this.state,  StateEnum.START);
+				pcs.firePropertyChange("statechange", this.state, StateEnum.START);
 				this.state = StateEnum.START;
 				break;
 			}
 		}
 	}
-
 
 }

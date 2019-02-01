@@ -72,6 +72,7 @@ public class HandleRequest<T> implements Runnable {
 			e.printStackTrace();
 		}
 	    GsonBuilder gsonBldr = new GsonBuilder();
+<<<<<<< HEAD
 	    Request<DataModel<T>[]> request = gsonBldr.setLenient().create().fromJson(jsonStr, new TypeToken<Request<DataModel<T>[]>>() {}.getType());
 	    
 	    /**
@@ -84,6 +85,9 @@ public class HandleRequest<T> implements Runnable {
 			e.printStackTrace();
 		} **/
 
+=======
+	    Request<DataModel<T>[]> request = gsonBldr.setLenient().create().fromJson(myString, new TypeToken<Request<DataModel<T>[]>>() {}.getType());
+>>>>>>> b3d0a4feec47314ff2071cbbb12fff46c7e01d1b
 		return request;
 	}
 
