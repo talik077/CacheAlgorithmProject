@@ -102,6 +102,8 @@ public class HandleRequest<T> implements Runnable {
 			Response<Boolean> responseDelete = new Response<Boolean>(request.getHeaders(), resDel);
 			jsonResult = gson.toJson(responseDelete);
 			break;
+		case "OPTIONS": 
+			
 		}
 
 		return jsonResult;

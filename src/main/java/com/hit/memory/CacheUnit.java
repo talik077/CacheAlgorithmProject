@@ -4,6 +4,7 @@ import com.hit.dm.DataModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.hit.algorithm.IAlgoCache;
 import com.hit.dao.IDao;
@@ -12,10 +13,24 @@ public class CacheUnit<T> {
 
 	protected IAlgoCache<Long, DataModel<T>> m_IAlgoCache;
 	protected IDao<Long, DataModel<T>> m_Dao;
+	private static Map<String, Integer> counter;
 
 	public CacheUnit(IAlgoCache<Long, DataModel<T>> algo, IDao<Long, DataModel<T>> dao) {
 		this.m_IAlgoCache = algo;
 		this.m_Dao = dao;
+		this.counter = new HashMap<String, Integer>() {
+			{
+				put("get", 0);
+				put("update", 0);
+				put("remove", 0);
+				put("swap", 0);
+			}
+		};
+	}
+
+	private void IncrementCounter(String key) {
+		Integer currentValue = this.counter.containsKey(key) ? this.counter.get(key) : 0;
+		this.counter.put(key, currentValue + 1);
 	}
 
 	public DataModel<T>[] getDataModels(Long[] ids) {
@@ -23,6 +38,7 @@ public class CacheUnit<T> {
 		for (long id : ids) {
 			DataModel<T> temp = (DataModel<T>) this.m_IAlgoCache.getElement(id);
 			if (temp != null) {
+				this.IncrementCounter("get");
 				list.add(temp);
 			} else {
 				DataModel<T> storedValue = checkStoredDaoCache(id);
@@ -42,6 +58,7 @@ public class CacheUnit<T> {
 		if (storedValue != null) {
 			DataModel<T> removedCachedValue = this.m_IAlgoCache.putElement(id, storedValue);
 			if (removedCachedValue != null) { // algo cache is full
+				this.IncrementCounter("swap");
 				this.m_Dao.save(removedCachedValue);
 			}
 			this.m_Dao.delete(storedValue);
@@ -54,9 +71,11 @@ public class CacheUnit<T> {
 		for (DataModel<T> temp : datamodels) {
 			long Id = temp.getDataModelId();
 			l.put(Id, temp);
-
+			this.IncrementCounter("update");
+			
 			DataModel<T> removedElement = this.m_IAlgoCache.putElement(Id, temp);
 			if (removedElement != null) {
+				this.IncrementCounter("swap");
 				long removedElementId = removedElement.getDataModelId();
 				this.m_Dao.save(removedElement);
 				// l.remove(removedElementId);
@@ -71,6 +90,7 @@ public class CacheUnit<T> {
 	public void removeDataModels(Long[] ids) {
 		for (Long id : ids) {
 			if (this.m_IAlgoCache.getElement(id) != null) {
+				this.IncrementCounter("remove");
 				this.m_IAlgoCache.removeElement(id);
 			}
 		}
