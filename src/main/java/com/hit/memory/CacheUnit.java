@@ -30,10 +30,10 @@ public class CacheUnit<T> {
 					list.add(storedValue);
 			}
 		}
-		
-		DataModel[] myass = new DataModel[list.size()];
-		list.toArray(myass);
-		return myass;
+
+		DataModel[] dataArray = new DataModel[list.size()];
+		list.toArray(dataArray);
+		return dataArray;
 	}
 
 	private DataModel<T> checkStoredDaoCache(Long id) {
@@ -63,9 +63,9 @@ public class CacheUnit<T> {
 			}
 		}
 
-		DataModel[] myass = new DataModel[l.size()];
-		l.values().toArray(myass);
-		return myass;
+		DataModel[] dataArray = new DataModel[l.size()];
+		l.values().toArray(dataArray);
+		return dataArray;
 	}
 
 	public void removeDataModels(Long[] ids) {

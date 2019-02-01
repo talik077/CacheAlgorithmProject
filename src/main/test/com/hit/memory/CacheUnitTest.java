@@ -3,16 +3,14 @@ package com.hit.memory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import org.junit.Test;
 
-import com.hit.memory.CacheUnit;
-import com.hit.dm.DataModel;
 import com.hit.algorithm.IAlgoCache;
 import com.hit.algorithm.LRUAlgoCacheImpl;
 import com.hit.dao.DaoFileImpl;
+import com.hit.dm.DataModel;
 
 public class CacheUnitTest {
 	private String m_filePath = "output.txt";
