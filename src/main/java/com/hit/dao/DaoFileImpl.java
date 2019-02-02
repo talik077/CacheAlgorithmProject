@@ -7,7 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * @author Shahar and Tal
+ * 
  * @param <T>
+ * Save data models that out of the memory to a file.
  */
 public class DaoFileImpl<T> implements IDao<Long, DataModel<T>> {
 	private final String filePath;
@@ -31,7 +34,10 @@ public class DaoFileImpl<T> implements IDao<Long, DataModel<T>> {
 		this.capacity = capacity;
 		this.toInitialize = true;
 	}
-
+	
+	/***
+	 * Save the the model in a file, and also in a local HashMap
+	 */
 	@Override
 	public void save(DataModel<T> entity) {
 		try {
@@ -44,6 +50,9 @@ public class DaoFileImpl<T> implements IDao<Long, DataModel<T>> {
 		}
 	}
 
+	/***
+	 * Delete the entity from the file, and also in the local HashMap
+	 */
 	@Override
 	public void delete(DataModel<T> entity) throws IllegalArgumentException {
 		if (entity == null) {
@@ -60,6 +69,9 @@ public class DaoFileImpl<T> implements IDao<Long, DataModel<T>> {
 		}
 	}
 
+	/***
+	 * Return the entity from the File/HashMap
+	 */
 	@Override
 	public DataModel<T> find(Long id) throws IllegalArgumentException {
 		if (id == null) {

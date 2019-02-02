@@ -4,13 +4,25 @@ import com.hit.dao.DaoFileImpl;
 import com.hit.dao.IDao;
 import com.hit.dm.DataModel;
 import com.hit.memory.CacheUnit;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.hit.algorithm.*;
 
 public class CacheUnitService<T>
 {
 	private static CacheUnitService<?> singleton = null;
 	
+	/**
+	 * Capacity of the unit cache
+	 */
 	private static int capacity = 20;
+	
+	/**
+	 * The Alogortihem to use for the unit cache
+	 */
 	private static IAlgoCache algo = new LRUAlgoCacheImpl(capacity);
 	private CacheUnit<T> cacheUnit = null;
 	
@@ -22,6 +34,9 @@ public class CacheUnitService<T>
 		this.cacheUnit = new CacheUnit(this.algo, dao);
 	}
 	
+	/**
+	 * Singleton for cacheunit get - get instance
+	 */
 	public static CacheUnitService<?> getInstance()
 	{
 		if (singleton == null)
@@ -37,12 +52,18 @@ public class CacheUnitService<T>
 		singleton = new CacheUnitService<>();
 	}
 	
+	/**
+	 * Change capacity of the cache unit
+	 * @param cap
+	 */
+	
 	public static void changeCapcity(int cap)
 	{
 		capacity = cap;
 		singleton = null;
 		singleton = new CacheUnitService<>();
 	}
+	
 	
 	///Update cacheUnit by removing old data and insert updated data
 	public boolean update(DataModel<T>[] dataModels)
@@ -89,5 +110,17 @@ public class CacheUnitService<T>
 		}
 		
 		return null;
+	}
+	
+	/** 
+	 * Return HashMap of relevant data of the cache unit
+	 * @return
+	 */
+	public HashMap<String, Integer> getCacheSummary()
+	{
+		HashMap<String, Integer> summary = (HashMap<String, Integer>) cacheUnit.getCacheSummary().clone();
+		summary.put("capacity", algo.getCapacity());
+		summary.put("available", algo.getAvailableSlotsCount());
+		return summary;
 	}
 }

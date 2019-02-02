@@ -14,6 +14,12 @@ import com.hit.services.CacheUnitController;
 import com.hit.util.StateEnum;
 import com.hit.services.CacheUnitService;
 
+/**
+ * Create Tcp Server that listenes for requests, and return response.
+ * 
+ * @author Shahar and Tal
+ *
+ */
 public class Server implements Runnable, PropertyChangeListener, EventListener {
 	private int m_Port;
 
@@ -25,10 +31,15 @@ public class Server implements Runnable, PropertyChangeListener, EventListener {
 		this.m_Port = port;
 	}
 
+	/**
+	 * The server is runing as long as State of the server is start and not stop
+	 * 
+	 */
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub+
 		Socket socket = null;
+		// Creating ThreadPool the thread for each request
 		ExecutorService pool = Executors.newFixedThreadPool(20);
 		ServerSocket listener = null;
 		try {
@@ -56,7 +67,10 @@ public class Server implements Runnable, PropertyChangeListener, EventListener {
 		this.terminateServer(pool, listener);
 
 	}
-
+	
+	/**
+	 * Whenever the cli updates the Server get notify and changes things propely according to the script.
+	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		String name = evt.getPropertyName();
@@ -91,6 +105,11 @@ public class Server implements Runnable, PropertyChangeListener, EventListener {
 		}
 	}
 
+	/** 
+	 * Stoping the server handling of new requests.
+	 * @param executor
+	 * @param socket
+	 */
 	private void terminateServer(ExecutorService executor, ServerSocket socket) {
 		executor.shutdown();
 

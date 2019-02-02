@@ -36,6 +36,9 @@ public class CLI implements Runnable {
 		this.m_PrintStream.println(string);
 	}
 
+	/**
+	 * CLI get commands and update server accordingly.
+	 */
 	@Override
 	public void run() {
 		String algorithem = "LRU";

@@ -4,13 +4,21 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.hit.dm.DataModel;
 import com.hit.services.CacheUnitController;
 
+/***
+ * Handle the request and response of the server
+ * @author Shahar and Tal
+ *
+ * @param <T>
+ */
 public class HandleRequest<T> implements Runnable {
 
 	private static Gson gson = new Gson();
@@ -20,6 +28,11 @@ public class HandleRequest<T> implements Runnable {
 
 	private ObjectInputStream in;
 
+	/**
+	 * 
+	 * @param s - The Socket of the user
+	 * @param controller - The Cache Unit controller that retrive data from the CacheUnit
+	 */
 	public HandleRequest(Socket s, CacheUnitController<T> controller) {
 		this.m_Socket = s;
 		this.m_Controller = controller;
@@ -32,6 +45,9 @@ public class HandleRequest<T> implements Runnable {
 
 	}
 
+	/**
+	 * Handle the process of Getting the request, sending the response and closing the socket.
+	 */
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
@@ -61,7 +77,12 @@ public class HandleRequest<T> implements Runnable {
 
 		}
 	}
-
+	
+	/**
+	 * 
+	 * @param socket
+	 * @return The Request parsed with the data models.
+	 */
 	private Request<DataModel<T>[]> GetRequest(Socket socket) {
 		// ObjectInputStream in = null;
 		String jsonStr = null;
@@ -75,7 +96,13 @@ public class HandleRequest<T> implements Runnable {
 	    Request<DataModel<T>[]> request = gsonBldr.setLenient().create().fromJson(jsonStr, new TypeToken<Request<DataModel<T>[]>>() {}.getType());
 		return request;
 	}
-
+	
+	/**
+	 * 
+	 * @param request
+	 * @return the response that the server will send to the client, depends on the action in the headers
+	 *
+	 */
 	private String Response(Request<DataModel<T>[]> request) {
 		String action = request.getHeaders().get("action");
 		DataModel<T>[] dataModels = request.getBody();
@@ -99,7 +126,10 @@ public class HandleRequest<T> implements Runnable {
 			jsonResult = gson.toJson(responseDelete);
 			break;
 		case "OPTIONS": 
-			
+			Map<String, Integer> CacheData = (Map<String, Integer>)this.m_Controller.options();
+			Response<Map<String, Integer>> responseOptions = new Response<Map<String, Integer>>(request.getHeaders(), CacheData);
+			jsonResult = gson.toJson(responseOptions, new TypeToken<Response<Map<String, Integer>>>() {}.getType());
+			break;
 		}
 
 		return jsonResult;
